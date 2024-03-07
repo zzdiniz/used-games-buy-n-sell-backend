@@ -1,14 +1,14 @@
 import express, {Request,Response}from "express"
-import User from "./models/User"
+import cors from "cors"
 const app = express()
-const PORT = 3000
-const user:User = {name:'Bruno', age:21}
-app.get('/', (req,res)=>{
-    res.send('Hello world!')
-})
-app.get('/user',(req:Request,res:Response)=>{
-    res.send(`My name is ${user.name} and i'm ${user.age} years old :)`)
-})
+
+const PORT = 5000
+
+
+app.use(express.json())
+app.use(cors({credentials:true,origin:"http://localhost:3000"}))
+app.use(express.static('public'))
+
 app.listen(PORT,()=>{
     console.log(`Listening to port ${PORT}`)
 })
