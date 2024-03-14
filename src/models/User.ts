@@ -1,10 +1,13 @@
 import conn from "../db/conn";
 interface UserData {
+  readonly id?:number
   name: string;
   email: string;
   password: string;
-  image: string;
-  phone: string;
+  image?: string;
+  phone?: string;
+  readonly created_at?: Date
+  readonly updated_at?: Date
 }
 class User {
   private userData: UserData;
@@ -16,8 +19,21 @@ class User {
     conn.query(query,(err)=>{
         if(err){
             console.error(`Error in User:${err}`)
+            return
         }
     })
   }
+  public static async getUserByEmail(email: string): Promise<UserData | undefined> {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT * FROM User WHERE email='${email}'`;
+        conn.query(query, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data.length > 0 ? data[0] : undefined);
+            }
+        });
+    });
+}
 }
 export default User;
