@@ -5,7 +5,7 @@ interface UserData {
   email: string;
   password: string;
   image?: string;
-  phone?: string;
+  phone: string;
   readonly created_at?: Date
   readonly updated_at?: Date
 }
