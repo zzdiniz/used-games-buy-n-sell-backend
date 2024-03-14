@@ -19,6 +19,7 @@ User.getUserByEmail("bruno7240@gmail.com").then((res) => {
     price: 80.0,
     sellerId: res.id,
     available: true,
+    images: ['https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.atogames.com.br%2Fghost-of-tsushima-ps4%2F&psig=AOvVaw30tS3XoQDc5da-LaaK6V6v&ust=1710526069380000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCNCu_aes9IQDFQAAAAAdAAAAABAE']
   });
   game.insert();
 });
