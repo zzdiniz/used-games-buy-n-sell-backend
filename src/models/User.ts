@@ -14,6 +14,12 @@ class User {
   constructor(userData: UserData) {
     this.userData = userData;
   }
+  public getId():number{
+    return this.userData.id
+  }
+  public getName():string{
+    return this.userData.name
+  }
   public insert() {
     const query = `INSERT INTO Users (name,email,password,image,phone) VALUES ('${this.userData.name}','${this.userData.email}','${this.userData.password}','${this.userData.image}','${this.userData.phone}')`;
     conn.query(query,(err)=>{

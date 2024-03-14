@@ -1,6 +1,7 @@
 import User from "../models/User";
 import { Request, Response } from "express";
 import {genSalt,hash} from 'bcrypt'
+import createUserToken from "../helpers/create-user-token";
 
 class UserController {
   static async register(req: Request, res: Response) {
@@ -40,7 +41,7 @@ class UserController {
     const user = new User({name,email,password:passwordHash,image,phone})
     try {
         user.insert()
-        res.status(201).json({message:'User created'})
+        createUserToken({user,req,res})
         return
     } catch (error) {
         res.status(500).json({message:error})
