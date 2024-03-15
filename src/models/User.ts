@@ -41,5 +41,17 @@ class User {
         });
     });
 }
+public static async getUserById(id: number): Promise<UserData | undefined> {
+  return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM Users WHERE id='${id}'`;
+      conn.query(query, (err, data) => {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(data.length > 0 ? data[0] : undefined);
+          }
+      });
+  });
+}
 }
 export default User;

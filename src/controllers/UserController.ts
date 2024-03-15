@@ -2,6 +2,8 @@ import User from "../models/User";
 import { Request, Response } from "express";
 import {genSalt,hash,compare} from 'bcrypt'
 import createUserToken from "../helpers/create-user-token";
+import getUserToken from "../helpers/get-user-token";
+import {JwtPayload, verify} from 'jsonwebtoken'
 
 class UserController {
   static async register(req: Request, res: Response) {
@@ -74,6 +76,18 @@ class UserController {
       return
     }
     createUserToken(user?.id,user.name,req,res)
+    return
+  }
+  static async validate(req: Request, res: Response){
+    if(req.headers.authorization){
+        const token = getUserToken(req)
+        const tokenDecoded = verify(token,'secretUGBS') as JwtPayload
+        const currentUser = await User.getUserById(tokenDecoded.id)
+        delete currentUser.password
+        res.status(200).send({message:currentUser})
+        return
+    }
+    res.status(422).send({message: 'Authorization token was not sent'})
     return
   }
 }
