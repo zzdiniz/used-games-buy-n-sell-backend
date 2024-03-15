@@ -1,15 +1,10 @@
 import {sign} from 'jsonwebtoken'
 import {Request,Response} from 'express'
-import User from '../models/User';
-interface CreateUserTokenProps {
-    user: User;
-    req: Request;
-    res: Response;
-}
-const createUserToken = ({user,req,res}:CreateUserTokenProps) => {
+
+const createUserToken = (userId:number,userName:string,req:Request,res:Response) => {
     const token = sign({
-        id: user.getId(),
-        name: user.getName()
+        id: userId,
+        name: userName
     }, "secretUGBS")
     res.status(200).json({
         message: 'User authenticated',

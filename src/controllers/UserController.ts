@@ -1,6 +1,6 @@
 import User from "../models/User";
 import { Request, Response } from "express";
-import {genSalt,hash} from 'bcrypt'
+import {genSalt,hash,compare} from 'bcrypt'
 import createUserToken from "../helpers/create-user-token";
 
 class UserController {
@@ -41,13 +41,40 @@ class UserController {
     const user = new User({name,email,password:passwordHash,image,phone})
     try {
         user.insert()
-        createUserToken({user,req,res})
+        createUserToken(user.getId(),user.getName(),req,res)
         return
     } catch (error) {
         res.status(500).json({message:error})
     }
-    res.send("User created");
     return;
+  }
+  
+  static async login(req: Request, res: Response){
+
+    const {email,password} = req.body
+
+    if (!email) {
+      res.status(422).json({ message: "Email is required" });
+      return;
+    }
+    if (!password) {
+      res.status(422).json({ message: "Password is required" });
+      return;
+    }
+
+    const user = await User.getUserByEmail(email)
+    if(!user){
+      res.status(422).json({ message: `There is no user with email '${email}'`});
+      return
+    }
+
+    const isCorrectPassword = await compare(password,user.password)
+    if(!isCorrectPassword){
+      res.status(422).json({ message: 'Password invalid'});
+      return
+    }
+    createUserToken(user?.id,user.name,req,res)
+    return
   }
 }
 
