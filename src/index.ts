@@ -6,7 +6,7 @@ import UserRoutes from "./routes/UserRoutes"
 
 const app = express();
 
-const PORT = 5000;
+const PORT = 3000;
 
 app.use(express.json());
 app.use(cors({ credentials: true, origin: "http://localhost:5000" }));
