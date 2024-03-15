@@ -84,11 +84,26 @@ class UserController {
         const tokenDecoded = verify(token,'secretUGBS') as JwtPayload
         const currentUser = await User.getUserById(tokenDecoded.id)
         delete currentUser.password
-        res.status(200).send({message:currentUser})
+        res.status(200).json({message:currentUser})
         return
     }
-    res.status(422).send({message: 'Authorization token was not sent'})
+    res.status(422).json({message: 'Authorization token was not sent'})
     return
+  }
+  static async getUserById(req: Request, res: Response){
+    if(!req.params.id){
+      res.status(422).json({message: 'You must send an Id'})
+      return
+    }
+    const id = parseInt(req.params.id)
+    const user = await User.getUserById(id)
+    delete user.password
+
+    if(!user){
+      res.status(422).json({message: `Ther is no user with id: ${id}`})
+      return
+    }
+    res.status(200).json({user})
   }
 }
 
