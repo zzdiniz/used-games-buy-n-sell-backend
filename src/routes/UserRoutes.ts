@@ -8,6 +8,6 @@ router.post('/register', UserController.register)
 router.post('/login', UserController.login)
 router.get('/validate', UserController.validate)
 router.get('/:id', UserController.getUserById)
-router.patch('/edit/:id', verifyToken,UserController.edit)
+router.patch('/edit', verifyToken,UserController.edit)
 
 export default router
