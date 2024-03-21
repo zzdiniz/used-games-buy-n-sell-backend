@@ -5,6 +5,7 @@ import createUserToken from "../helpers/create-user-token";
 import getUserToken from "../helpers/get-user-token";
 import { JwtPayload, verify } from "jsonwebtoken";
 import getUserByToken from "../helpers/get-user-by-token";
+import imageUpload from "../middlewares/imageUpload";
 
 class UserController {
   static async register(req: Request, res: Response) {
@@ -109,7 +110,7 @@ class UserController {
   }
 
   static async edit(req: Request, res: Response) {
-    const { name, email, phone, password, image, confirmedPassword } = req.body;
+    const { name, email, phone, password,confirmedPassword } = req.body;
     const token = getUserToken(req);
     const user = await getUserByToken(token, res);
 
@@ -133,6 +134,7 @@ class UserController {
     }
     const salt = await genSalt(12);
     const passwordHash = password ? await hash(password, salt) : "";
+    const image = req.file? req.file.filename : ''
     try {
       await User.edit({
         id: user.id,
