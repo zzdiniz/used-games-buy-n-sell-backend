@@ -5,11 +5,10 @@ import createUserToken from "../helpers/create-user-token";
 import getUserToken from "../helpers/get-user-token";
 import { JwtPayload, verify } from "jsonwebtoken";
 import getUserByToken from "../helpers/get-user-by-token";
-import imageUpload from "../middlewares/imageUpload";
 
 class UserController {
   static async register(req: Request, res: Response) {
-    const { name, email, password, confirmedPassword, image, phone } = req.body;
+    const { name, email, password, confirmedPassword, phone } = req.body;
     if (!name) {
       return res.status(422).json({ message: "Name is required" });
     }
@@ -24,11 +23,11 @@ class UserController {
         .status(422)
         .json({ message: "Password confirmation is required" });
     }
-    if (!phone) {
-      return res.status(422).json({ message: "Phone is required" });
-    }
     if (password !== confirmedPassword) {
       return res.status(422).json({ message: "Passwords must match" });
+    }
+    if (!phone) {
+      return res.status(422).json({ message: "Phone is required" });
     }
     const userExists = await User.getUserByEmail(email);
     if (userExists) {
@@ -43,7 +42,6 @@ class UserController {
       name,
       email,
       password: passwordHash,
-      image,
       phone,
     });
     try {
