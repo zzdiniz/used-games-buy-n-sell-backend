@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
     cb(null, `public/images/${req.baseUrl.includes('users')?'users':'games'}`);
   },
   filename: function(req, file, cb) {
-    cb(null, Date.now()+extname(file.originalname));
+    cb(null, Date.now() + Math.floor(Math.random()).toString() + extname(file.originalname));
   }
 });
 

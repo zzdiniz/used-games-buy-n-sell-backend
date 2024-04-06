@@ -60,7 +60,7 @@ class User {
     const query = `UPDATE Users SET ${fieldsToUpdate.join(
       ", "
     )} WHERE id = ${id}`;
-    console.log(query)
+
     return new Promise((resolve, reject) => {
       conn.query(query, (err, data) => {
         if (err) {
