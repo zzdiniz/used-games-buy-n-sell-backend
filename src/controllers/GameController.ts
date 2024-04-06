@@ -75,6 +75,15 @@ class GameController {
       return res.status(500).json({ message: error });
     }
   }
+
+  static async getAll(req: Request, res: Response) {
+    try {
+        const games = await Game.getAll()
+        return res.status(200).json({games})
+    } catch (error) {
+        return res.status(500).json({ message: error });
+    }
+  } 
 }
 
 export default GameController;
