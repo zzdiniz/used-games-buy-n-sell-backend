@@ -34,7 +34,7 @@ class Game {
   }
 
   static async getAll(): Promise<GameData> {
-    const query = `SELECT * FROM Games ORDER BY updated_at DESC`;
+    const query = `SELECT * FROM Games WHERE available=1 ORDER BY updated_at DESC`;
 
     return new Promise((resolve, reject) => {
       conn.query(query, (err, data) => {
@@ -45,6 +45,33 @@ class Game {
       });
     });
   }
+
+  static async getUserGames(userId:number): Promise<GameData> {
+    const query = `SELECT * FROM Games WHERE sellerId=${userId} ORDER BY updated_at DESC`;
+
+    return new Promise((resolve, reject) => {
+      conn.query(query, (err, data) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(data);
+      });
+    });
+  }
+
+  static async getUserPurchases(userId:number): Promise<GameData> {
+    const query = `SELECT * FROM Games WHERE buyerId=${userId} ORDER BY updated_at DESC`;
+
+    return new Promise((resolve, reject) => {
+      conn.query(query, (err, data) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(data);
+      });
+    });
+  }
+  
 }
 
 export default Game;

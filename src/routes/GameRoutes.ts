@@ -7,5 +7,7 @@ const router = Router()
 
 router.post('/create',verifyToken,imageUpload.array('images'),GameController.create)
 router.get('/', GameController.getAll)
+router.get('/my-games',verifyToken, GameController.getUserGames)
+router.get('/my-purchases',verifyToken, GameController.getUserPurchases)
 
 export default router

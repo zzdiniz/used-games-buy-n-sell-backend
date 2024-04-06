@@ -84,6 +84,30 @@ class GameController {
         return res.status(500).json({ message: error });
     }
   } 
+
+  static async getUserGames(req: Request, res: Response) {
+    const token = getUserToken(req)
+    
+    try {
+        const seller = await getUserByToken(token,res)
+        const games = await Game.getUserGames(seller.id)
+        return res.status(200).json({games})
+    } catch (error) {
+        return res.status(500).json({ message: error });
+    }
+  }
+
+  static async getUserPurchases(req: Request, res: Response) {
+    const token = getUserToken(req)
+    
+    try {
+        const buyer = await getUserByToken(token,res)
+        const games = await Game.getUserPurchases(buyer.id)
+        return res.status(200).json({games})
+    } catch (error) {
+        return res.status(500).json({ message: error });
+    }
+  }
 }
 
 export default GameController;
