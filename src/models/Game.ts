@@ -72,6 +72,19 @@ class Game {
     });
   }
   
+  static async getGameById(gameId:number): Promise<GameData> {
+    const query = `SELECT * FROM Games WHERE id=${gameId}`;
+
+    return new Promise((resolve, reject) => {
+      conn.query(query, (err, data) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(data);
+      });
+    });
+  }
+
 }
 
 export default Game;

@@ -108,6 +108,17 @@ class GameController {
         return res.status(500).json({ message: error });
     }
   }
+
+  static async getGameById(req: Request, res: Response) {
+    const gameId = req.params.id
+    try {
+        const game = await Game.getGameById(parseInt(gameId))
+        return res.status(200).json({game})
+    } catch (error) {
+        return res.status(500).json({ message: error });
+    }
+  }
+
 }
 
 export default GameController;
