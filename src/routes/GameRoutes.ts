@@ -10,5 +10,6 @@ router.get('/', GameController.getAll)
 router.get('/my-games',verifyToken, GameController.getUserGames)
 router.get('/my-purchases',verifyToken, GameController.getUserPurchases)
 router.get('/:id', GameController.getGameById)
+router.delete('/:id',verifyToken,GameController.deleteGameById)
 
 export default router

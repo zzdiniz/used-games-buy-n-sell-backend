@@ -113,7 +113,33 @@ class GameController {
     const gameId = req.params.id
     try {
         const game = await Game.getGameById(parseInt(gameId))
+        if(!game){
+          return res.status(404).json({message: 'Game not found'})
+        }
         return res.status(200).json({game})
+    } catch (error) {
+        return res.status(500).json({ message: error });
+    }
+  }
+
+  static async deleteGameById(req: Request, res: Response) {
+    const gameId = req.params.id
+    const token = getUserToken(req)
+    try {
+        const game = await Game.getGameById(parseInt(gameId))
+
+        if(!game){
+          return res.status(404).json({message: 'Game not found'})
+        }
+
+        const user = await getUserByToken(token,res)
+        
+        if(user.id !== game.sellerId){
+          return res.status(401).json({message: 'Users can only delete their own games'})
+        }
+        await Game.deleteGameById(game.id)
+        return res.status(200).json({message: 'Game deleted'})
+
     } catch (error) {
         return res.status(500).json({ message: error });
     }
