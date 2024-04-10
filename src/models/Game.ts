@@ -1,6 +1,15 @@
 import { OkPacket } from "mysql";
 import conn from "../db/conn";
-
+interface MulterImage {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+}
 interface GameData {
   readonly id?: number;
   name: string;
@@ -21,7 +30,13 @@ class Game {
   }
 
   async insert(): Promise<OkPacket> {
-    const query = `INSERT INTO Games (name,description,platform,price,available,images,sellerId) VALUES ('${this.gameData.name}','${this.gameData.description}','${this.gameData.platform}','${this.gameData.price}','${this.gameData.available === true? 1 : 0}','${JSON.stringify(this.gameData.images)}','${this.gameData.sellerId}')`;
+    const query = `INSERT INTO Games (name,description,platform,price,available,images,sellerId) VALUES ('${
+      this.gameData.name
+    }','${this.gameData.description}','${this.gameData.platform}','${
+      this.gameData.price
+    }','${this.gameData.available === true ? 1 : 0}','${JSON.stringify(
+      this.gameData.images
+    )}','${this.gameData.sellerId}')`;
 
     return new Promise((resolve, reject) => {
       conn.query(query, (err, data) => {
@@ -46,7 +61,7 @@ class Game {
     });
   }
 
-  static async getUserGames(userId:number): Promise<GameData> {
+  static async getUserGames(userId: number): Promise<GameData> {
     const query = `SELECT * FROM Games WHERE sellerId=${userId} ORDER BY updated_at DESC`;
 
     return new Promise((resolve, reject) => {
@@ -59,7 +74,7 @@ class Game {
     });
   }
 
-  static async getUserPurchases(userId:number): Promise<GameData> {
+  static async getUserPurchases(userId: number): Promise<GameData> {
     const query = `SELECT * FROM Games WHERE buyerId=${userId} ORDER BY updated_at DESC`;
 
     return new Promise((resolve, reject) => {
@@ -71,8 +86,8 @@ class Game {
       });
     });
   }
-  
-  static async getGameById(gameId:number): Promise<GameData> {
+
+  static async getGameById(gameId: number): Promise<GameData> {
     const query = `SELECT * FROM Games WHERE id=${gameId}`;
 
     return new Promise((resolve, reject) => {
@@ -85,7 +100,7 @@ class Game {
     });
   }
 
-  static async deleteGameById(gameId:number): Promise<OkPacket> {
+  static async deleteGameById(gameId: number): Promise<OkPacket> {
     const query = `DELETE FROM Games WHERE id=${gameId}`;
 
     return new Promise((resolve, reject) => {
@@ -98,6 +113,36 @@ class Game {
     });
   }
 
+  public static edit(
+    id: number,
+    name: string,
+    description: string,
+    price: number,
+    platform: string,
+    images: Array<String> | boolean
+  ): Promise<OkPacket> {
+
+    const fieldsToUpdate = [
+      name && `name = '${name}'`,
+      description && `description = '${description}'`,
+      price && `price = '${price}'`,
+      images && `images = '${JSON.stringify(images)}'`,
+      platform && `platform = '${platform}'`,
+    ].filter(Boolean);
+    const query = `UPDATE Games SET ${fieldsToUpdate.join(
+      ", "
+    )} WHERE id = ${id}`;
+
+    return new Promise((resolve, reject) => {
+      conn.query(query, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
 }
 
 export default Game;
