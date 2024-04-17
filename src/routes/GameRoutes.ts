@@ -9,6 +9,7 @@ router.post('/create',verifyToken,imageUpload.array('images'),GameController.cre
 router.get('/', GameController.getAll)
 router.get('/my-games',verifyToken, GameController.getUserGames)
 router.get('/my-purchases',verifyToken, GameController.getUserPurchases)
+router.patch('/schedule/:id',verifyToken,GameController.schedule)
 router.get('/:id', GameController.getGameById)
 router.delete('/:id',verifyToken,GameController.deleteGameById)
 router.patch('/:id',verifyToken,imageUpload.array('images'),GameController.editGame)

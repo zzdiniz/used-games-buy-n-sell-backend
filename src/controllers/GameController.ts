@@ -2,6 +2,7 @@ import getUserToken from "../helpers/get-user-token";
 import getUserByToken from "../helpers/get-user-by-token";
 import Game from "../models/Game";
 import { Request, Response } from "express";
+import User from "../models/User";
 interface MulterImage {
   fieldname: string;
   originalname: string;
@@ -192,17 +193,53 @@ class GameController {
       }
 
       await Game.edit(
-        game.id,
-        name,
-        description,
-        parseFloat(price),
-        platform,
-        images && images.length > 0 ? images.map((image) => image.filename) : false
+        {
+          id:game.id,
+          name,
+          description,
+          price:parseFloat(price),
+          platform,
+          images:images && images.length > 0 ? images.map((image) => image.filename) : false
+        }
       );
 
       return res.status(200).json({ message: "Game updated" });
     } catch (error) {
 
+      return res.status(500).json({ message: error });
+    }
+  }
+
+  static async schedule(req: Request, res: Response) {
+    const gameId = req.params.id;
+    const token = getUserToken(req);
+    try {
+      const game = await Game.getGameById(parseInt(gameId));
+
+      if (!game) {
+        return res.status(404).json({ message: "Game not found" });
+      }
+
+      const buyer = await getUserByToken(token, res);
+      const seller = await User.getUserById(game.sellerId)
+
+      if (buyer.id === game.sellerId) {
+        return res
+          .status(422)
+          .json({ message: "You can't buy your own games" });
+      }
+
+      if(game.buyerId){
+        if(buyer.id === game.buyerId){
+          return res
+          .status(422)
+          .json({ message: "You have already scheduled a meeting" });
+        }
+      }
+
+      await Game.edit({id:game.id, buyerId: buyer.id});
+      return res.status(200).json({ message: `Scheduled successfully, contact ${seller.name} on phone ${seller.phone} for more information` });
+    } catch (error) {
       return res.status(500).json({ message: error });
     }
   }

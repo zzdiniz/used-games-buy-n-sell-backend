@@ -1,14 +1,13 @@
 import { OkPacket } from "mysql";
 import conn from "../db/conn";
-interface MulterImage {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  destination: string;
-  filename: string;
-  path: string;
-  size: number;
+interface EditableFields {
+  id?: number;
+  name?: string;
+  description?: string;
+  price?: number;
+  platform?: string;
+  images?: Array<String> | boolean;
+  buyerId?: number;
 }
 interface GameData {
   readonly id?: number;
@@ -113,21 +112,22 @@ class Game {
     });
   }
 
-  public static edit(
-    id: number,
-    name: string,
-    description: string,
-    price: number,
-    platform: string,
-    images: Array<String> | boolean
-  ): Promise<OkPacket> {
-
+  public static edit({
+    id,
+    name,
+    description,
+    price,
+    images,
+    platform,
+    buyerId,
+  }: EditableFields): Promise<OkPacket> {
     const fieldsToUpdate = [
       name && `name = '${name}'`,
       description && `description = '${description}'`,
       price && `price = '${price}'`,
       images && `images = '${JSON.stringify(images)}'`,
       platform && `platform = '${platform}'`,
+      buyerId && `buyerId = '${buyerId}'`,
     ].filter(Boolean);
     const query = `UPDATE Games SET ${fieldsToUpdate.join(
       ", "
