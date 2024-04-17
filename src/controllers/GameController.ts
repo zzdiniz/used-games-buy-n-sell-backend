@@ -50,11 +50,9 @@ class GameController {
     }
 
     if (images.length > 5) {
-      return res
-        .status(422)
-        .json({
-          message: "You have reached the limit of photos that can be sent",
-        });
+      return res.status(422).json({
+        message: "You have reached the limit of photos that can be sent",
+      });
     }
 
     const available = true;
@@ -170,11 +168,9 @@ class GameController {
     }
 
     if (images && images.length > 5) {
-      return res
-        .status(422)
-        .json({
-          message: "You have reached the limit of photos that can be sent",
-        });
+      return res.status(422).json({
+        message: "You have reached the limit of photos that can be sent",
+      });
     }
 
     try {
@@ -192,20 +188,20 @@ class GameController {
           .json({ message: "Users can only edit their own games" });
       }
 
-      await Game.edit(
-        {
-          id:game.id,
-          name,
-          description,
-          price:parseFloat(price),
-          platform,
-          images:images && images.length > 0 ? images.map((image) => image.filename) : false
-        }
-      );
+      await Game.edit({
+        id: game.id,
+        name,
+        description,
+        price: parseFloat(price),
+        platform,
+        images:
+          images && images.length > 0
+            ? images.map((image) => image.filename)
+            : false,
+      });
 
       return res.status(200).json({ message: "Game updated" });
     } catch (error) {
-
       return res.status(500).json({ message: error });
     }
   }
@@ -221,7 +217,7 @@ class GameController {
       }
 
       const buyer = await getUserByToken(token, res);
-      const seller = await User.getUserById(game.sellerId)
+      const seller = await User.getUserById(game.sellerId);
 
       if (buyer.id === game.sellerId) {
         return res
@@ -229,18 +225,40 @@ class GameController {
           .json({ message: "You can't buy your own games" });
       }
 
-      if(game.buyerId){
-        if(buyer.id === game.buyerId){
+      if (game.buyerId) {
+        if (buyer.id === game.buyerId) {
           return res
-          .status(422)
-          .json({ message: "You have already scheduled a meeting" });
+            .status(422)
+            .json({ message: "You have already scheduled a meeting" });
         }
       }
 
-      await Game.edit({id:game.id, buyerId: buyer.id});
-      return res.status(200).json({ message: `Scheduled successfully, contact ${seller.name} on phone ${seller.phone} for more information` });
+      await Game.edit({ id: game.id, buyerId: buyer.id });
+      return res.status(200).json({
+        message: `Scheduled successfully, contact ${seller.name} on phone ${seller.phone} for more information`,
+      });
     } catch (error) {
       return res.status(500).json({ message: error });
+    }
+  }
+  static async completeSale(req: Request, res: Response) {
+    const gameId = req.params.id;
+    const token = getUserToken(req);
+    try {
+      const game = await Game.getGameById(parseInt(gameId));
+      if (!game) {
+        return res.status(404).json({ message: "Game not found" });
+      }
+      const seller = await getUserByToken(token, res);
+      if (seller.id !== game.sellerId) {
+        return res
+          .status(422)
+          .json({ message: "You can only modify your own games" });
+      }
+      await Game.edit({ id: parseInt(gameId), available: "false" });
+      return res.status(200).json({ message: "Sale completed successfully" });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 }

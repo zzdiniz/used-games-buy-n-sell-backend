@@ -1,13 +1,14 @@
 import { OkPacket } from "mysql";
 import conn from "../db/conn";
 interface EditableFields {
-  id?: number;
+  id: number;
   name?: string;
   description?: string;
   price?: number;
   platform?: string;
   images?: Array<String> | boolean;
   buyerId?: number;
+  available?: "true" | "false";
 }
 interface GameData {
   readonly id?: number;
@@ -120,6 +121,7 @@ class Game {
     images,
     platform,
     buyerId,
+    available,
   }: EditableFields): Promise<OkPacket> {
     const fieldsToUpdate = [
       name && `name = '${name}'`,
@@ -128,6 +130,7 @@ class Game {
       images && `images = '${JSON.stringify(images)}'`,
       platform && `platform = '${platform}'`,
       buyerId && `buyerId = '${buyerId}'`,
+      available && `available = '${available === "true" ? 1 : 0}'`,
     ].filter(Boolean);
     const query = `UPDATE Games SET ${fieldsToUpdate.join(
       ", "
