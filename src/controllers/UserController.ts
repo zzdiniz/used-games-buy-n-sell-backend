@@ -84,7 +84,7 @@ class UserController {
       const tokenDecoded = verify(token, "secretUGBS") as JwtPayload;
       const currentUser = await User.getUserById(tokenDecoded.id);
       delete currentUser.password;
-      return res.status(200).json({ message: currentUser });
+      return res.status(200).json(currentUser);
     }
     return res
       .status(422)

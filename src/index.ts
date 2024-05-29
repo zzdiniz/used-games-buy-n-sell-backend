@@ -8,7 +8,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
-app.use(cors({ credentials: true, origin: "http://localhost:5000" }));
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express.static("public"));
 app.use('/users',UserRoutes)
 app.use('/games',GameRoutes)
